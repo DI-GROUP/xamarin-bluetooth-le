@@ -45,6 +45,7 @@
     <Compile Include="ConnectParameter.cs" />
     <Compile Include="Contracts\BluetoothState.cs" />
     <Compile Include="Contracts\IAdapter.cs" />
+    <Compile Include="Contracts\IAndroidConnectionParametersUpdater.cs" />
     <Compile Include="Contracts\IBluetoothLE.cs" />
     <Compile Include="Contracts\ICharacteristic.cs" />
     <Compile Include="Contracts\IDescriptor.cs" />

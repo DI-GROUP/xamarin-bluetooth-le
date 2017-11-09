@@ -16,7 +16,7 @@ using Trace = Plugin.BLE.Abstractions.Trace;
 
 namespace Plugin.BLE.Android
 {
-    public class Device : DeviceBase
+    public class Device : DeviceBase,IAndroidConnectionParametersUpdater
     {
         public BluetoothDevice BluetoothDevice { get; private set; }
 
@@ -344,6 +344,23 @@ namespace Plugin.BLE.Android
             {
                 throw new Exception($"Update Connection Interval fails with error. {ex.Message}");
             }
+        }
+
+        bool IAndroidConnectionParametersUpdater.RequestConnectionParametersUpdate(ConnectionPriority connectionPriority)
+        {
+            if(_gatt != null)
+                switch (connectionPriority)
+                {
+                    case ConnectionPriority.High:
+                        return _gatt.RequestConnectionPriority(GattConnectionPriority.High);
+                    case ConnectionPriority.Normal:
+                        return _gatt.RequestConnectionPriority(GattConnectionPriority.Balanced);
+                    case ConnectionPriority.Low:
+                        return _gatt.RequestConnectionPriority(GattConnectionPriority.LowPower);
+                    default:
+                        throw new NotImplementedException("Unknown priority");
+                }
+            return false;
         }
     }
 }
