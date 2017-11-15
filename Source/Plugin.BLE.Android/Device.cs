@@ -44,10 +44,29 @@ namespace Plugin.BLE.Android
         {
             BluetoothDevice = nativeDevice;
             _gatt = gatt;
-
+            if(_gatt != null)
+                ResetGattCache(_gatt);
 
             Id = ParseDeviceId();
             Name = BluetoothDevice.Name;
+        }
+
+        private bool ResetGattCache(BluetoothGatt gatt)
+        {
+            Java.Lang.Reflect.Method method = gatt.Class.GetMethod("refresh", null);
+            if (method != null)
+            {
+                try
+                {
+                    method.Invoke(gatt, null);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            return false;
         }
 
         public override object NativeDevice => BluetoothDevice;
