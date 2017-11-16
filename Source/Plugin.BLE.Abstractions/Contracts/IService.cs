@@ -26,6 +26,11 @@ namespace Plugin.BLE.Abstractions.Contracts
 		bool IsPrimary { get; }
 
         /// <summary>
+        /// Allready known characteristics
+        /// </summary>
+        IReadOnlyList<ICharacteristic> Characteristics { get; }
+
+        /// <summary>
         /// Returns the parent device.
         /// </summary>
         IDevice Device { get; }

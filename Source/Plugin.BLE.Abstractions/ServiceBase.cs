@@ -9,6 +9,7 @@ namespace Plugin.BLE.Abstractions
     public abstract class ServiceBase : IService
     {
         private readonly List<ICharacteristic> _characteristics = new List<ICharacteristic>();
+        public IReadOnlyList<ICharacteristic> Characteristics { get; }
 
         public string Name => KnownServices.Lookup(Id).Name;
         public abstract Guid Id { get; }
@@ -17,6 +18,7 @@ namespace Plugin.BLE.Abstractions
 
         protected ServiceBase(IDevice device)
         {
+            Characteristics = _characteristics;
             Device = device;
         }
 

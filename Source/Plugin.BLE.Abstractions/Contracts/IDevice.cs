@@ -39,6 +39,11 @@ namespace Plugin.BLE.Abstractions.Contracts
         DeviceState State { get; }
 
         /// <summary>
+        /// Allready discovered services.
+        /// </summary>
+        IReadOnlyList<IService> KnownServices { get; }
+
+        /// <summary>
         /// All the advertisment records
         /// For example:
         /// - Advertised Service UUIDS

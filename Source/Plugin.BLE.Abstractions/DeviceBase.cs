@@ -36,7 +36,8 @@ namespace Plugin.BLE.Abstractions
     public abstract class DeviceBase : IDevice, ICancellationMaster
     {
         protected readonly IAdapter Adapter;
-        protected readonly List<IService> KnownServices = new List<IService>();
+        protected readonly List<IService> _knownServices = new List<IService>();
+        public IReadOnlyList<IService> KnownServices { get; }
         public Guid Id { get; protected set; }
         public string Name { get; protected set; }
         public int Rssi { get; protected set; }
@@ -48,20 +49,21 @@ namespace Plugin.BLE.Abstractions
 
         protected DeviceBase(IAdapter adapter)
         {
+            KnownServices = _knownServices;
             Adapter = adapter;
         }
 
         public async Task<IList<IService>> GetServicesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (!KnownServices.Any())
+            if (!_knownServices.Any())
             {
                 using (var source = this.GetCombinedSource(cancellationToken))
                 {
-                    KnownServices.AddRange(await GetServicesNativeAsync());
+                    _knownServices.AddRange(await GetServicesNativeAsync());
                 }
             }
 
-            return KnownServices;
+            return _knownServices;
         }
 
         public async Task<IService> GetServiceAsync(Guid id, CancellationToken cancellationToken = default(CancellationToken))
@@ -100,7 +102,7 @@ namespace Plugin.BLE.Abstractions
         {
             this.CancelEverythingAndReInitialize();
 
-            foreach (var service in KnownServices)
+            foreach (var service in _knownServices)
             {
                 try
                 {
@@ -112,7 +114,7 @@ namespace Plugin.BLE.Abstractions
                 }
             }
 
-            KnownServices.Clear();
+            _knownServices.Clear();
         }
 
         public override bool Equals(object other)
