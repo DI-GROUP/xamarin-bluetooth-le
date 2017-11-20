@@ -44,11 +44,6 @@ namespace Plugin.BLE.Abstractions.Contracts
         bool IsScanning { get; }
 
         /// <summary>
-        /// Timeout for Ble scanning. Default is 10000.
-        /// </summary>
-        int ScanTimeout { get; set; }
-
-        /// <summary>
         /// Specifies the scanning mode. Must be set before calling StartScanningForDevicesAsync().
         /// Changing it while scanning, will have no change the current scan behavior.
         /// Default: <see cref="ScanMode.LowPower"/> 

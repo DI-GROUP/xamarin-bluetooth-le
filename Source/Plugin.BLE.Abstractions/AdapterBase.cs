@@ -30,7 +30,6 @@ namespace Plugin.BLE.Abstractions
             private set { _isScanning = value; }
         }
 
-        public int ScanTimeout { get; set; } = 10000;
         public ScanMode ScanMode { get; set; } = ScanMode.LowPower;
 
         public virtual IList<IDevice> DiscoveredDevices => _discoveredDevices;
@@ -60,7 +59,7 @@ namespace Plugin.BLE.Abstractions
                 using (cancellationToken.Register(() => _scanCancellationTokenSource?.Cancel()))
                 {
                     await StartScanningForDevicesNativeAsync(serviceUuids, allowDuplicatesKey, _scanCancellationTokenSource.Token);
-                    await Task.Delay(ScanTimeout, _scanCancellationTokenSource.Token);
+                    await Task.Delay(int.MaxValue, _scanCancellationTokenSource.Token);
                     Trace.Message("Adapter: Scan timeout has elapsed.");
                     CleanupScan();
                     ScanTimeoutElapsed(this, new System.EventArgs());
