@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
@@ -31,6 +32,8 @@ namespace Plugin.BLE.Android
         /// we'll get notified when services are enumerated
         /// </summary>
         private readonly GattCallback _gattCallback;
+
+        private CancellationToken _currentConnectionToken;
 
         public Device(Adapter adapter, BluetoothDevice nativeDevice, BluetoothGatt gatt, int rssi, byte[] advertisementData = null) : base(adapter)
         {
@@ -95,8 +98,15 @@ namespace Plugin.BLE.Android
                 unsubscribeReject: handler => _gattCallback.ConnectionInterrupted -= handler);
         }
 
-        public void Connect(ConnectParameters connectParameters)
+        public void Connect(ConnectParameters connectParameters, CancellationToken token)
         {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            _currentConnectionToken = token;
+
             IsOperationRequested = true;
 
             if (connectParameters.ForceBleTransport)
@@ -380,6 +390,14 @@ namespace Plugin.BLE.Android
                         throw new NotImplementedException("Unknown priority");
                 }
             return false;
+        }
+
+        public void HandleConnectionCancellation()
+        {
+            if (_currentConnectionToken.IsCancellationRequested)
+            {
+                _gatt?.Disconnect();
+            }
         }
     }
 }

@@ -130,6 +130,7 @@ namespace Plugin.BLE.Android
                         _adapter.HandleConnectedDevice(_device);
                     }
 
+                    _device.HandleConnectionCancellation();
                     break;
                 // disconnecting
                 case ProfileState.Disconnecting:
