@@ -116,7 +116,11 @@ namespace Plugin.BLE.Android
             else
             {
                 /*_gatt = */
-                BluetoothDevice.ConnectGatt(Application.Context, connectParameters.AutoConnect, _gattCallback);
+                var t = BluetoothDevice.ConnectGatt(Application.Context, connectParameters.AutoConnect, _gattCallback);
+                if (t == null)
+                {
+                    throw new Exception("Unknown error");
+                }
             }
         }
 
