@@ -77,6 +77,11 @@ namespace Plugin.BLE.Android
         {
             _nativeCharacteristic.WriteType = writeType.ToNative();
 
+            if (writeType == CharacteristicWriteType.WithoutResponse)
+            {
+                return InternalWrite(data);
+            }
+
             return await TaskBuilder.FromEvent<bool, EventHandler<CharacteristicWriteCallbackEventArgs>, EventHandler>(
                 execute: () => InternalWrite(data),
                 getCompleteHandler: (complete, reject) => ((sender, args) =>
@@ -96,19 +101,16 @@ namespace Plugin.BLE.Android
                unsubscribeReject: handler => _gattCallback.ConnectionInterrupted -= handler);
         }
 
-        private void InternalWrite(byte[] data)
+        private bool InternalWrite(byte[] data)
         {
             if (!_nativeCharacteristic.SetValue(data))
             {
-                throw new CharacteristicReadException("Gatt characteristic set value FAILED.");
+                return false;
             }
 
             Trace.Message("Write {0}", Id);
 
-            if (!_gatt.WriteCharacteristic(_nativeCharacteristic))
-            {
-                throw new CharacteristicReadException("Gatt write characteristic FAILED.");
-            }
+            return _gatt.WriteCharacteristic(_nativeCharacteristic);
         }
 
         protected override async Task StartUpdatesNativeAsync()
